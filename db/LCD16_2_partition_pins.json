@@ -42,10 +42,6 @@
 				{
 					"name" : "CLOCK_50",
 					"strict" : false
-				},
-				{
-					"name" : "input_data[8]",
-					"strict" : false
 				}
 			]
 		}

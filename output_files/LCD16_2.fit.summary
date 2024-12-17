@@ -1,4 +1,4 @@
-Fitter Status : Successful - Fri Dec 13 20:40:31 2024
+Fitter Status : Successful - Tue Dec 17 16:53:06 2024
 Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 Revision Name : LCD16_2
 Top-level Entity Name : LCD16_2
@@ -6,8 +6,8 @@ Family : Cyclone V
 Device : 5CSEMA5F31C6
 Timing Models : Final
 Logic utilization (in ALMs) : 66 / 32,070 ( < 1 % )
-Total registers : 89
-Total pins : 20 / 457 ( 4 % )
+Total registers : 92
+Total pins : 11 / 457 ( 2 % )
 Total virtual pins : 0
 Total block memory bits : 0 / 4,065,280 ( 0 % )
 Total RAM Blocks : 0 / 397 ( 0 % )
