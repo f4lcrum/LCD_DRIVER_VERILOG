@@ -9,20 +9,23 @@ module driver_lcd(
 
 	//////////// Data //////////
 	input 		     [8:0]		input_data,
-	
-	
+	input 							data_ready,
+	input 							reset_button,
+	output reg 							lcd_busy,
+	output reg 						first_run,
 	//////////// OUTPUT //////////
 	output		     [9:0]		pins // GPIO_0[7:0] = D0-D7; GPIO_0[8] = RS; GPIO_0[9] = E
+	
 );
 
 
 parameter INP_CLK_FREQ = 50000000; // in HZ
 
-reg busy_flag = 1'b0;
 reg rs = 1'b0;
 reg e;
 reg [7:0] data = 8'b0000_0000;
 reg [4:0] state = 5'b00000;
+reg run = 1'b0;
 
 
 assign pins[7:0] = data;
@@ -61,6 +64,17 @@ reg flag_50ms  = 1'b0;
 
 
 always @(posedge clk) begin
+  if (data_ready) begin
+		run <= 1'b1; // better to save state to register
+  end
+  if (reset_button == 1'b1) begin
+		 count <= 24'h000000;
+		 counter_clear <= 1'b1;  
+		 state <= STATE00;
+		 run <= 1'b0;
+		 lcd_busy <= 1'b0;
+  end
+
   if (counter_clear) begin
     count <= 24'h000000;
     counter_clear <= 1'b0;  
@@ -74,29 +88,29 @@ always @(posedge clk) begin
   end
 
   if (!counter_clear) begin
-    count <= count + 1;
-    if (count == DELAY_50ns) begin
-      flag_50ns  <= 1'b1;
-    end
-    if (count == DELAY_450ns) begin
-      flag_450ns <= 1'b1;
-    end
-    if (count == DELAY_40us) begin
-      flag_40us  <= 1'b1;
-    end
-    if (count == DELAY_60us) begin
-      flag_60us  <= 1'b1;
-    end
-    if (count == DELAY_2ms) begin
-      flag_2ms   <= 1'b1;
-    end
-    if (count == DELAY_5ms) begin
-      flag_5ms   <= 1'b1;
-    end
-	 if (count == DELAY_50ms) begin
-		flag_50ms  <= 1'b1;
-	 end
-  end
+		 count <= count + 1;
+		 if (count == DELAY_50ns) begin
+			flag_50ns  <= 1'b1;
+		 end
+		 if (count == DELAY_450ns) begin
+			flag_450ns <= 1'b1;
+		 end
+		 if (count == DELAY_40us) begin
+			flag_40us  <= 1'b1;
+		 end
+		 if (count == DELAY_60us) begin
+			flag_60us  <= 1'b1;
+		 end
+		 if (count == DELAY_2ms) begin
+			flag_2ms   <= 1'b1;
+		 end
+		 if (count == DELAY_5ms) begin
+			flag_5ms   <= 1'b1;
+		 end
+		if (count == DELAY_50ms) begin
+			flag_50ms  <= 1'b1;
+		end
+	end
 
 
 
@@ -107,236 +121,246 @@ always @(posedge clk) begin
 
 
 
-case (state)
+	case (state)
 
-  // Step 1 - 100ms delay after power on
-  STATE00: begin                        
-    busy_flag <= 1'b1;                  // tells other modules LCD is processing
-    if (flag_50ms) begin               // if 50ms have elapsed
-      rs <= 1'b0;                       // pull RS low to indicate instruction
-      data  <= 8'b00110000;                // set data to Function Set instruction
-      counter_clear <= 1'b1;            // clear the counter
-      state <= STATE01;                 // advance to the next state
-    end
-  end
+	  // Step 1 - 100ms delay after power on
+	  STATE00: begin
+		 first_run <= 1'b1;
+		 lcd_busy <= 1'b1;                  // tells other modules LCD is processing
+		 if (flag_50ms) begin               // if 50ms have elapsed
+			rs <= 1'b0;                       // pull RS low to indicate instruction
+			data  <= 8'b00110000;                // set data to Function Set instruction
+			counter_clear <= 1'b1;            // clear the counter
+			state <= STATE01;                 // advance to the next state
+		 end
+	  end
 
-  // Steps 2 thru 4 raise and lower the enable pin three times to enter the 
-  // Function Set instruction that was loaded to the databus in STATE00 above
+	  // Steps 2 thru 4 raise and lower the enable pin three times to enter the 
+	  // Function Set instruction that was loaded to the databus in STATE00 above
 
-  // Step 2 - first Function Set instruction
-  STATE01: begin                        
-    if (flag_5ms) begin                // if 50ns have elapsed (lets RS and D settle)
-      e <= 1'b1;                        // bring E high to initiate data write    
-      counter_clear <= 1'b1;            // clear the counter
-      state <= STATE02;                 // advance to the next state
-    end
-  end
-  STATE02: begin                         
-    if (flag_450ns) begin               // if 450ns have elapsed
-      e <= 1'b0;                        // bring E low   
-      counter_clear <= 1'b1;            // clear the counter
-      state <= STATE03;                 // advance to the next state
-    end
-  end
-  STATE03: begin
-    if (flag_5ms) begin                 // if 5ms have elapsed
-      e <= 1'b1;                        // bring E high to initiate data write   
-      counter_clear <= 1'b1;            // clear the counter      
-      state <= STATE04;                 // advance to the next state               
-    end
-  end
+	  // Step 2 - first Function Set instruction
+	  STATE01: begin                        
+		 if (flag_5ms) begin                // if 50ns have elapsed (lets RS and D settle)
+			e <= 1'b1;                        // bring E high to initiate data write    
+			counter_clear <= 1'b1;            // clear the counter
+			state <= STATE02;                 // advance to the next state
+		 end
+	  end
+	  STATE02: begin                         
+		 if (flag_450ns) begin               // if 450ns have elapsed
+			e <= 1'b0;                        // bring E low   
+			counter_clear <= 1'b1;            // clear the counter
+			state <= STATE03;                 // advance to the next state
+		 end
+	  end
+	  STATE03: begin
+		 if (flag_5ms) begin                 // if 5ms have elapsed
+			e <= 1'b1;                        // bring E high to initiate data write   
+			counter_clear <= 1'b1;            // clear the counter      
+			state <= STATE04;                 // advance to the next state               
+		 end
+	  end
 
- // Step 3 - second Function Set instruction
-  STATE04: begin
-    if (flag_450ns) begin               // if 250ns have elapsed
-      e <= 1'b0;                        // bring E low    
-      counter_clear <= 1'b1;            // clear the counter
-      state <= STATE05;                 // advance to the next state  
-    end
-  end
-  STATE05: begin
-    if (flag_5ms) begin 
-      e <= 1'b1;                           
-      counter_clear <= 1'b1;
-      state <= STATE06;
-      end
-    end
+	 // Step 3 - second Function Set instruction
+	  STATE04: begin
+		 if (flag_450ns) begin               // if 250ns have elapsed
+			e <= 1'b0;                        // bring E low    
+			counter_clear <= 1'b1;            // clear the counter
+			state <= STATE05;                 // advance to the next state  
+		 end
+	  end
+	  STATE05: begin
+		 if (flag_5ms) begin 
+			e <= 1'b1;                           
+			counter_clear <= 1'b1;
+			state <= STATE06;
+			end
+		 end
 
-  // Step 4 - third and final Function Set instruction
-  STATE06: begin
-    if (flag_450ns) begin
-      e <= 1'b0;      
-      counter_clear <= 1'b1;
-      state <= STATE07;                          
-    end
-  end
-  STATE07: begin
-    if (flag_5ms) begin
-      data  <= 8'b00111000;                // configuration cmd = 8-bit mode, 2 lines, 5x7 font 
-      counter_clear <= 1'b1;
-      state <= STATE08;
-    end
-  end
+	  // Step 4 - third and final Function Set instruction
+	  STATE06: begin
+		 if (flag_450ns) begin
+			e <= 1'b0;      
+			counter_clear <= 1'b1;
+			state <= STATE07;                          
+		 end
+	  end
+	  STATE07: begin
+		 if (flag_5ms) begin
+			data  <= 8'b00111000;                // configuration cmd = 8-bit mode, 2 lines, 5x7 font 
+			counter_clear <= 1'b1;
+			state <= STATE08;
+		 end
+	  end
 
-  // Step 5 - enter the Configuration command
-  STATE08: begin                        
-    if (flag_5ms) begin 
-      e <= 1'b1; 
-      counter_clear <= 1'b1; 
-      state <= STATE09;
-    end
-  end
-  STATE09: begin                        
-    if (flag_450ns) begin
-      e <= 1'b0; 
-      counter_clear <= 1'b1; 
-      state <= STATE10;
-    end
-  end
-  STATE10: begin
-    if (flag_60us) begin
-      data  <= 8'b00001000;                // display off 
-      counter_clear <= 1'b1;
-      state <= STATE11;
-    end
-  end
+	  // Step 5 - enter the Configuration command
+	  STATE08: begin                        
+		 if (flag_5ms) begin 
+			e <= 1'b1; 
+			counter_clear <= 1'b1; 
+			state <= STATE09;
+		 end
+	  end
+	  STATE09: begin                        
+		 if (flag_450ns) begin
+			e <= 1'b0; 
+			counter_clear <= 1'b1; 
+			state <= STATE10;
+		 end
+	  end
+	  STATE10: begin
+		 if (flag_60us) begin
+			data  <= 8'b00001000;                // display off 
+			counter_clear <= 1'b1;
+			state <= STATE11;
+		 end
+	  end
 
-  // Step 6 - enter the Display Off command
-  STATE11: begin                        
-    if (flag_5ms) begin 
-      e <= 1'b1;                       
-      counter_clear <= 1'b1;
-      state <= STATE12;
-    end
-  end
-  STATE12: begin                        
-    if (flag_450ns) begin
-      e <= 1'b0;
-      counter_clear <= 1'b1;
-      state <= STATE13;
-    
-    end
-  end
-  STATE13: begin
-    if (flag_60us) begin
-      data  <= 8'b00000001;                // clear command
-      counter_clear <= 1'b1;
-      state <= STATE14;
-     end
-  end
+	  // Step 6 - enter the Display Off command
+	  STATE11: begin                        
+		 if (flag_5ms) begin 
+			e <= 1'b1;                       
+			counter_clear <= 1'b1;
+			state <= STATE12;
+		 end
+	  end
+	  STATE12: begin                        
+		 if (flag_450ns) begin
+			e <= 1'b0;
+			counter_clear <= 1'b1;
+			state <= STATE13;
+		 
+		 end
+	  end
+	  STATE13: begin
+		 if (flag_60us) begin
+			data  <= 8'b00000001;                // clear command
+			counter_clear <= 1'b1;
+			state <= STATE14;
+		  end
+	  end
 
-  // Step 7 - enter the Clear command
-  STATE14: begin                        
-    if (flag_5ms) begin
-      e <= 1'b1;
-      counter_clear <= 1'b1;
-      state <= STATE15;   
-    end
-  end
-  STATE15: begin                        
-    if (flag_450ns) begin
-      e <= 1'b0;
-      counter_clear <= 1'b1;
-      state <= STATE16;     
-    end
-  end
-  STATE16: begin
-    if (flag_5ms) begin                 // 5ms (clear command has a long cycle time)
-      data  <= 8'b00000110;                // entry mode  
-      counter_clear <= 1'b1;
-      state <= STATE17;
-     end
-  end
+	  // Step 7 - enter the Clear command
+	  STATE14: begin                        
+		 if (flag_5ms) begin
+			e <= 1'b1;
+			counter_clear <= 1'b1;
+			state <= STATE15;   
+		 end
+	  end
+	  STATE15: begin                        
+		 if (flag_450ns) begin
+			e <= 1'b0;
+			counter_clear <= 1'b1;
+			state <= STATE16;     
+		 end
+	  end
+	  STATE16: begin
+		 if (flag_5ms) begin                 // 5ms (clear command has a long cycle time)
+			data  <= 8'b00000110;                // entry mode  
+			counter_clear <= 1'b1;
+			state <= STATE17;
+		  end
+	  end
 
-  //Step 8 - Set the Entry Mode to: cursor moves, display stands still
-  STATE17: begin                        
-    if (flag_5ms) begin
-      e <= 1'b1;   
-      counter_clear <= 1'b1;
-      state <= STATE18;
-    end
-  end
-  STATE18: begin                        
-    if (flag_450ns) begin 
-      e <= 1'b0;  
-      counter_clear <= 1'b1;
-      state <= STATE19;    
-    end
-  end
-  STATE19: begin
-    if (flag_60us) begin
-      data  <= 8'b00001100;                // Display On
-      counter_clear <= 1'b1;
-      state <= STATE20;
-    end
-  end
+	  //Step 8 - Set the Entry Mode to: cursor moves, display stands still
+	  STATE17: begin                        
+		 if (flag_5ms) begin
+			e <= 1'b1;   
+			counter_clear <= 1'b1;
+			state <= STATE18;
+		 end
+	  end
+	  STATE18: begin                        
+		 if (flag_450ns) begin 
+			e <= 1'b0;  
+			counter_clear <= 1'b1;
+			state <= STATE19;    
+		 end
+	  end
+	  STATE19: begin
+		 if (flag_60us) begin
+			data  <= 8'b00001100;                // Display On
+			counter_clear <= 1'b1;
+			state <= STATE20;
+		 end
+	  end
 
-  // Step 9 - enter the Display On command
-  STATE20: begin                        
-    if (flag_5ms) begin
-      e <= 1'b1;
-      counter_clear <= 1'b1;
-      state <= STATE21;
-    end
-  end
-  STATE21: begin                        
-    if (flag_450ns) begin
-      e <= 1'b0;
-      counter_clear <= 1'b1;
-      state <= STATE22;
-    end
-  end
-  STATE22: begin
-    if (flag_60us) begin
-      busy_flag <= 1'b0;                // clear the busy flag
-      counter_clear <= 1'b1;
-      state <= STATE23;  
+	  // Step 9 - enter the Display On command
+	  STATE20: begin                        
+		 if (flag_5ms) begin
+			e <= 1'b1;
+			counter_clear <= 1'b1;
+			state <= STATE21;
+		 end
+	  end
+	  STATE21: begin                        
+		 if (flag_450ns) begin
+			e <= 1'b0;
+			counter_clear <= 1'b1;
+			state <= STATE22;
+		 end
+	  end
+	  STATE22: begin
+		 if (flag_60us) begin
+			lcd_busy <= 1'b0;                // clear the busy flag, LCD ready for input data
+			counter_clear <= 1'b1;
+			state <= STATE23; 
+			
+		 end
+	  end
 
-    end
-  end
+	// End Initialization - Start entering data.
 
-// End Initialization - Start entering data.
+	  STATE23: begin   
+		if (lcd_busy == 1'b0 && run == 1'b1) begin
+				first_run <= 1'b0;
+				run <= 1'b0;
+				counter_clear <= 1'b1;
+				rs <= input_data[8];                    // read the RS value from input       
+				data  <= input_data[7:0];                  // read the data value input 
+				lcd_busy <= 1'b1;                // set the busy flag
+				if (flag_50ns) begin  // if 50ns have elapsed and display is busy
+					counter_clear <= 1'b1;           // clear the counter
+					state <= STATE24;                // advance to the next state
+				end
+			end
+	  end	
 
-  STATE23: begin         
-    counter_clear <= 1'b1;
-    rs <= input_data[8];                    // read the RS value from input       
-    data  <= input_data[7:0];                  // read the data value input 
-    // data <= 8'h42;
-	 if (flag_50ns) begin                 // if 50ns have elapsed
-       counter_clear <= 1'b1;           // clear the counter
-       state <= STATE24;                // advance to the next state
-       end
-  end
+	  STATE24: begin   
+		 if (counter_clear) begin            // if this is the first iteration of STATE24
+			e <= 1'b1;                        // Bring E high to initiate data write
+		 end
+		 else if (flag_450ns) begin          // if 250ns have elapsed
+			counter_clear <= 1'b1;            // clear the counter
+			state <= STATE25;                 // advance to the next state
 
-  STATE24: begin   
-    if (counter_clear) begin            // if this is the first iteration of STATE24
-      e <= 1'b1;                        // Bring E high to initiate data write
-    end
-    else if (flag_450ns) begin          // if 250ns have elapsed
-      counter_clear <= 1'b1;            // clear the counter
-      state <= STATE25;                 // advance to the next state
+		 end
+	  end
 
-    end
-  end
+	  STATE25: begin
+		 if (counter_clear) begin            // if this is the first iteration of STATE25
+			e <= 1'b0;                        // Bring E low
+		 end
+		 else if (flag_40us == 1'b1 && rs == 1'b1) begin  // if data is a character and 40us has elapsed
+			lcd_busy <= 1'b0;                // clear the busy flag
+			counter_clear <= 1'b1;            // clear the counter 
+			state <= STATE23;                 // go back to STATE23 and wait for next data
+		 end
+		 else if (flag_2ms == 1'b1 && rs == 1'b0) begin // if data is a command and 2ms has elapsed
+			lcd_busy <= 1'b0;                // clear the busy flag
+			counter_clear <= 1'b1;            // clear the counter 
+			state <= STATE23;                 // go back to STATE23 and wait for next data
+		 end
+		 
+	  end
+	  
+	  default: ;
 
-  STATE25: begin
-    if (counter_clear) begin            // if this is the first iteration of STATE25
-      e <= 1'b0;                        // Bring E low
-    end
-    else if (flag_40us == 1'b1 && rs == 1'b1) begin  // if data is a character and 40us has elapsed
-      busy_flag <= 1'b0;                // clear the busy flag
-      counter_clear <= 1'b1;            // clear the counter 
-      state <= STATE23;                 // go back to STATE23 and wait for next data
-    end
-    else if (flag_2ms == 1'b1 && rs == 1'b0) begin // if data is a command and 2ms has elapsed
-      busy_flag <= 1'b0;                // clear the busy flag
-      counter_clear <= 1'b1;            // clear the counter 
-      state <= STATE23;                 // go back to STATE23 and wait for next data
-    end
-  end
-  default: ;
-endcase
-
+	endcase
+	
+	
+	
 end
 
 endmodule

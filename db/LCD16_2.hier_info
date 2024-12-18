@@ -1,15 +1,27 @@
 |LCD16_2
-CLOCK_50 => CLOCK_50.IN1
-GPIO_0[0] <= driver_lcd:u5.pins
-GPIO_0[1] <= driver_lcd:u5.pins
-GPIO_0[2] <= driver_lcd:u5.pins
-GPIO_0[3] <= driver_lcd:u5.pins
-GPIO_0[4] <= driver_lcd:u5.pins
-GPIO_0[5] <= driver_lcd:u5.pins
-GPIO_0[6] <= driver_lcd:u5.pins
-GPIO_0[7] <= driver_lcd:u5.pins
-GPIO_0[8] <= driver_lcd:u5.pins
-GPIO_0[9] <= driver_lcd:u5.pins
+CLOCK_50 => CLOCK_50.IN3
+KEY[0] => key.IN1
+KEY[1] => ~NO_FANOUT~
+KEY[2] => ~NO_FANOUT~
+KEY[3] => ~NO_FANOUT~
+GPIO_0[0] << driver_lcd:u5.pins
+GPIO_0[1] << driver_lcd:u5.pins
+GPIO_0[2] << driver_lcd:u5.pins
+GPIO_0[3] << driver_lcd:u5.pins
+GPIO_0[4] << driver_lcd:u5.pins
+GPIO_0[5] << driver_lcd:u5.pins
+GPIO_0[6] << driver_lcd:u5.pins
+GPIO_0[7] << driver_lcd:u5.pins
+GPIO_0[8] << driver_lcd:u5.pins
+GPIO_0[9] << driver_lcd:u5.pins
+
+
+|LCD16_2|find_rise:u1
+clk => out~reg0.CLK
+clk => old.CLK
+in => out.IN1
+in => old.DATAIN
+out <= out~reg0.DB_MAX_OUTPUT_PORT_TYPE
 
 
 |LCD16_2|driver_lcd:u5
@@ -23,6 +35,7 @@ clk => data[5].CLK
 clk => data[6].CLK
 clk => data[7].CLK
 clk => rs.CLK
+clk => first_run~reg0.CLK
 clk => flag_50ms.CLK
 clk => flag_5ms.CLK
 clk => flag_2ms.CLK
@@ -30,6 +43,7 @@ clk => flag_60us.CLK
 clk => flag_40us.CLK
 clk => flag_450ns.CLK
 clk => flag_50ns.CLK
+clk => lcd_busy~reg0.CLK
 clk => counter_clear.CLK
 clk => count[0].CLK
 clk => count[1].CLK
@@ -55,16 +69,73 @@ clk => count[20].CLK
 clk => count[21].CLK
 clk => count[22].CLK
 clk => count[23].CLK
+clk => run.CLK
 clk => state~27.DATAIN
-input_data[0] => Selector8.IN7
-input_data[1] => Selector7.IN7
-input_data[2] => Selector6.IN7
-input_data[3] => Selector5.IN7
-input_data[4] => Selector4.IN7
-input_data[5] => Selector3.IN7
-input_data[6] => Selector2.IN7
-input_data[7] => Selector1.IN7
-input_data[8] => Selector0.IN2
+input_data[0] => data.DATAB
+input_data[1] => data.DATAB
+input_data[2] => data.DATAB
+input_data[3] => data.DATAB
+input_data[4] => data.DATAB
+input_data[5] => data.DATAB
+input_data[6] => data.DATAB
+input_data[7] => data.DATAB
+input_data[8] => rs.DATAB
+data_ready => run.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => count.OUTPUTSELECT
+reset_button => counter_clear.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => state.OUTPUTSELECT
+reset_button => run.OUTPUTSELECT
+reset_button => lcd_busy.OUTPUTSELECT
+lcd_busy <= lcd_busy~reg0.DB_MAX_OUTPUT_PORT_TYPE
+first_run <= first_run~reg0.DB_MAX_OUTPUT_PORT_TYPE
 pins[0] <= data[0].DB_MAX_OUTPUT_PORT_TYPE
 pins[1] <= data[1].DB_MAX_OUTPUT_PORT_TYPE
 pins[2] <= data[2].DB_MAX_OUTPUT_PORT_TYPE
@@ -75,5 +146,65 @@ pins[6] <= data[6].DB_MAX_OUTPUT_PORT_TYPE
 pins[7] <= data[7].DB_MAX_OUTPUT_PORT_TYPE
 pins[8] <= rs.DB_MAX_OUTPUT_PORT_TYPE
 pins[9] <= e.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|LCD16_2|controller:u6
+clk => prev_reset.CLK
+clk => current_lcd_state.CLK
+clk => data_ready~reg0.CLK
+clk => halt.CLK
+clk => data_index[0]~reg0.CLK
+clk => data_index[1]~reg0.CLK
+clk => data_index[2]~reg0.CLK
+clk => data_index[3]~reg0.CLK
+lcd_busy => current_lcd_state.DATAB
+lcd_busy => always0.IN1
+lcd_busy => always0.IN1
+lcd_busy => current_lcd_state.DATAB
+lcd_busy => data_ready.OUTPUTSELECT
+lcd_busy => data_index.OUTPUTSELECT
+lcd_busy => data_index.OUTPUTSELECT
+lcd_busy => data_index.OUTPUTSELECT
+lcd_busy => data_index.OUTPUTSELECT
+reset_button => data_index.OUTPUTSELECT
+reset_button => data_index.OUTPUTSELECT
+reset_button => data_index.OUTPUTSELECT
+reset_button => data_index.OUTPUTSELECT
+reset_button => halt.OUTPUTSELECT
+reset_button => data_ready.OUTPUTSELECT
+reset_button => current_lcd_state.OUTPUTSELECT
+reset_button => always0.IN1
+reset_button => halt.OUTPUTSELECT
+reset_button => prev_reset.DATAIN
+first_run => data_index.OUTPUTSELECT
+first_run => data_index.OUTPUTSELECT
+first_run => data_index.OUTPUTSELECT
+first_run => data_index.OUTPUTSELECT
+data_ready <= data_ready~reg0.DB_MAX_OUTPUT_PORT_TYPE
+data_index[0] <= data_index[0]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+data_index[1] <= data_index[1]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+data_index[2] <= data_index[2]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+data_index[3] <= data_index[3]~reg0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|LCD16_2|memory:u7
+index[0] => Decoder0.IN3
+index[0] => Decoder1.IN2
+index[1] => Decoder0.IN2
+index[1] => Decoder1.IN1
+index[1] => Decoder2.IN1
+index[2] => Decoder0.IN1
+index[3] => Decoder0.IN0
+index[3] => Decoder1.IN0
+index[3] => Decoder2.IN0
+data_output[0] <= WideOr5.DB_MAX_OUTPUT_PORT_TYPE
+data_output[1] <= Decoder2.DB_MAX_OUTPUT_PORT_TYPE
+data_output[2] <= Decoder1.DB_MAX_OUTPUT_PORT_TYPE
+data_output[3] <= WideOr4.DB_MAX_OUTPUT_PORT_TYPE
+data_output[4] <= WideOr3.DB_MAX_OUTPUT_PORT_TYPE
+data_output[5] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+data_output[6] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+data_output[7] <= <GND>
+data_output[8] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
 
 

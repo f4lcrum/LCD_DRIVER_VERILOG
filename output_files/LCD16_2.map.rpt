@@ -1,5 +1,5 @@
 Analysis & Synthesis report for LCD16_2
-Tue Dec 17 16:52:09 2024
+Wed Dec 18 23:05:13 2024
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -18,10 +18,10 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
  10. General Register Statistics
  11. Multiplexer Restructuring Statistics (Restructuring Performed)
  12. Parameter Settings for User Entity Instance: driver_lcd:u5
- 13. Port Connectivity Checks: "driver_lcd:u5"
- 14. Post-Synthesis Netlist Statistics for Top Partition
- 15. Elapsed Time Per Partition
- 16. Analysis & Synthesis Messages
+ 13. Post-Synthesis Netlist Statistics for Top Partition
+ 14. Elapsed Time Per Partition
+ 15. Analysis & Synthesis Messages
+ 16. Analysis & Synthesis Suppressed Messages
 
 
 
@@ -48,14 +48,14 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                  ;
 +---------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status     ; Successful - Tue Dec 17 16:52:09 2024       ;
+; Analysis & Synthesis Status     ; Successful - Wed Dec 18 23:05:13 2024       ;
 ; Quartus Prime Version           ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                   ; LCD16_2                                     ;
 ; Top-level Entity Name           ; LCD16_2                                     ;
 ; Family                          ; Cyclone V                                   ;
 ; Logic utilization (in ALMs)     ; N/A                                         ;
-; Total registers                 ; 66                                          ;
-; Total pins                      ; 11                                          ;
+; Total registers                 ; 80                                          ;
+; Total pins                      ; 15                                          ;
 ; Total virtual pins              ; 0                                           ;
 ; Total block memory bits         ; 0                                           ;
 ; Total DSP Blocks                ; 0                                           ;
@@ -178,6 +178,9 @@ https://fpgasoftware.intel.com/eula.
 ; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                               ; Library ;
 +----------------------------------+-----------------+------------------------------+------------------------------------------------------------+---------+
 ; LCD16_2.v                        ; yes             ; User Verilog HDL File        ; C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v    ;         ;
+; controller.v                     ; yes             ; User Verilog HDL File        ; C:/Users/kristian/Desktop/pv200_final_project/controller.v ;         ;
+; memory.v                         ; yes             ; User Verilog HDL File        ; C:/Users/kristian/Desktop/pv200_final_project/memory.v     ;         ;
+; find_rise.v                      ; yes             ; Auto-Found Verilog HDL File  ; C:/Users/kristian/Desktop/pv200_final_project/find_rise.v  ;         ;
 ; driver_lcd.v                     ; yes             ; Auto-Found Verilog HDL File  ; C:/Users/kristian/Desktop/pv200_final_project/driver_lcd.v ;         ;
 +----------------------------------+-----------------+------------------------------+------------------------------------------------------------+---------+
 
@@ -187,25 +190,25 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------+----------------+
 ; Resource                                    ; Usage          ;
 +---------------------------------------------+----------------+
-; Estimate of Logic utilization (ALMs needed) ; 66             ;
+; Estimate of Logic utilization (ALMs needed) ; 92             ;
 ;                                             ;                ;
-; Combinational ALUT usage for logic          ; 113            ;
-;     -- 7 input functions                    ; 3              ;
-;     -- 6 input functions                    ; 14             ;
-;     -- 5 input functions                    ; 28             ;
-;     -- 4 input functions                    ; 34             ;
-;     -- <=3 input functions                  ; 34             ;
+; Combinational ALUT usage for logic          ; 153            ;
+;     -- 7 input functions                    ; 1              ;
+;     -- 6 input functions                    ; 28             ;
+;     -- 5 input functions                    ; 49             ;
+;     -- 4 input functions                    ; 30             ;
+;     -- <=3 input functions                  ; 45             ;
 ;                                             ;                ;
-; Dedicated logic registers                   ; 66             ;
+; Dedicated logic registers                   ; 80             ;
 ;                                             ;                ;
-; I/O pins                                    ; 11             ;
+; I/O pins                                    ; 15             ;
 ;                                             ;                ;
 ; Total DSP Blocks                            ; 0              ;
 ;                                             ;                ;
 ; Maximum fan-out node                        ; CLOCK_50~input ;
-; Maximum fan-out                             ; 66             ;
-; Total fan-out                               ; 641            ;
-; Average fan-out                             ; 3.19           ;
+; Maximum fan-out                             ; 80             ;
+; Total fan-out                               ; 861            ;
+; Average fan-out                             ; 3.27           ;
 +---------------------------------------------+----------------+
 
 
@@ -214,8 +217,11 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------+-------------+--------------+
 ; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name    ; Entity Name ; Library Name ;
 +----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------+-------------+--------------+
-; |LCD16_2                   ; 113 (1)             ; 66 (0)                    ; 0                 ; 0          ; 11   ; 0            ; |LCD16_2               ; LCD16_2     ; work         ;
-;    |driver_lcd:u5|         ; 112 (112)           ; 66 (66)                   ; 0                 ; 0          ; 0    ; 0            ; |LCD16_2|driver_lcd:u5 ; driver_lcd  ; work         ;
+; |LCD16_2                   ; 153 (0)             ; 80 (0)                    ; 0                 ; 0          ; 15   ; 0            ; |LCD16_2               ; LCD16_2     ; work         ;
+;    |controller:u6|         ; 10 (10)             ; 8 (8)                     ; 0                 ; 0          ; 0    ; 0            ; |LCD16_2|controller:u6 ; controller  ; work         ;
+;    |driver_lcd:u5|         ; 135 (135)           ; 70 (70)                   ; 0                 ; 0          ; 0    ; 0            ; |LCD16_2|driver_lcd:u5 ; driver_lcd  ; work         ;
+;    |find_rise:u1|          ; 2 (2)               ; 2 (2)                     ; 0                 ; 0          ; 0    ; 0            ; |LCD16_2|find_rise:u1  ; find_rise   ; work         ;
+;    |memory:u7|             ; 6 (6)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |LCD16_2|memory:u7     ; memory      ; work         ;
 +----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------+-------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
@@ -260,14 +266,13 @@ Encoding Type:  One-Hot
 +---------------------------------------+----------------------------------------+
 ; Register name                         ; Reason for Removal                     ;
 +---------------------------------------+----------------------------------------+
-; driver_lcd:u5|data[5]                 ; Merged with driver_lcd:u5|data[4]      ;
-; driver_lcd:u5|data[7]                 ; Stuck at GND due to stuck port data_in ;
 ; driver_lcd:u5|state~28                ; Lost fanout                            ;
 ; driver_lcd:u5|state~29                ; Lost fanout                            ;
 ; driver_lcd:u5|state~30                ; Lost fanout                            ;
 ; driver_lcd:u5|state~31                ; Lost fanout                            ;
 ; driver_lcd:u5|state~32                ; Lost fanout                            ;
-; Total Number of Removed Registers = 7 ;                                        ;
+; driver_lcd:u5|data[7]                 ; Stuck at GND due to stuck port data_in ;
+; Total Number of Removed Registers = 6 ;                                        ;
 +---------------------------------------+----------------------------------------+
 
 
@@ -276,25 +281,25 @@ Encoding Type:  One-Hot
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 66    ;
-; Number of registers using Synchronous Clear  ; 32    ;
+; Total registers                              ; 80    ;
+; Number of registers using Synchronous Clear  ; 31    ;
 ; Number of registers using Synchronous Load   ; 1     ;
 ; Number of registers using Asynchronous Clear ; 0     ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 3     ;
+; Number of registers using Clock Enable       ; 7     ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------+
-; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                  ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------+
-; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output        ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------+
-; 8:1                ; 2 bits    ; 10 LEs        ; 2 LEs                ; 8 LEs                  ; Yes        ; |LCD16_2|driver_lcd:u5|data[7]    ;
-; 10:1               ; 2 bits    ; 12 LEs        ; 4 LEs                ; 8 LEs                  ; Yes        ; |LCD16_2|driver_lcd:u5|data[4]    ;
-; 15:1               ; 3 bits    ; 30 LEs        ; 9 LEs                ; 21 LEs                 ; No         ; |LCD16_2|driver_lcd:u5|Selector10 ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------+
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                     ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output           ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------+
+; 4:1                ; 4 bits    ; 8 LEs         ; 8 LEs                ; 0 LEs                  ; Yes        ; |LCD16_2|controller:u6|data_index[1] ;
+; 11:1               ; 3 bits    ; 21 LEs        ; 6 LEs                ; 15 LEs                 ; Yes        ; |LCD16_2|driver_lcd:u5|data[4]       ;
+; 9:1                ; 3 bits    ; 18 LEs        ; 12 LEs               ; 6 LEs                  ; No         ; |LCD16_2|driver_lcd:u5|Selector13    ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------+
 
 
 +------------------------------------------------------------+
@@ -340,46 +345,33 @@ Encoding Type:  One-Hot
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
-+----------------------------------------------------+
-; Port Connectivity Checks: "driver_lcd:u5"          ;
-+------------------+-------+----------+--------------+
-; Port             ; Type  ; Severity ; Details      ;
-+------------------+-------+----------+--------------+
-; input_data[5..1] ; Input ; Info     ; Stuck at GND ;
-; input_data[8]    ; Input ; Info     ; Stuck at VCC ;
-; input_data[7]    ; Input ; Info     ; Stuck at GND ;
-; input_data[6]    ; Input ; Info     ; Stuck at VCC ;
-; input_data[0]    ; Input ; Info     ; Stuck at VCC ;
-+------------------+-------+----------+--------------+
-
-
 +-----------------------------------------------------+
 ; Post-Synthesis Netlist Statistics for Top Partition ;
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
-; arriav_ff             ; 66                          ;
-;     ENA               ; 2                           ;
-;     ENA SCLR SLD      ; 1                           ;
+; arriav_ff             ; 80                          ;
+;     ENA               ; 6                           ;
+;     ENA SLD           ; 1                           ;
 ;     SCLR              ; 31                          ;
-;     plain             ; 32                          ;
-; arriav_lcell_comb     ; 113                         ;
+;     plain             ; 42                          ;
+; arriav_lcell_comb     ; 154                         ;
 ;     arith             ; 24                          ;
 ;         1 data inputs ; 24                          ;
-;     extend            ; 3                           ;
-;         7 data inputs ; 3                           ;
-;     normal            ; 86                          ;
+;     extend            ; 1                           ;
+;         7 data inputs ; 1                           ;
+;     normal            ; 129                         ;
 ;         0 data inputs ; 1                           ;
-;         1 data inputs ; 1                           ;
-;         2 data inputs ; 1                           ;
-;         3 data inputs ; 7                           ;
-;         4 data inputs ; 34                          ;
-;         5 data inputs ; 28                          ;
-;         6 data inputs ; 14                          ;
-; boundary_port         ; 11                          ;
+;         1 data inputs ; 2                           ;
+;         2 data inputs ; 9                           ;
+;         3 data inputs ; 10                          ;
+;         4 data inputs ; 30                          ;
+;         5 data inputs ; 49                          ;
+;         6 data inputs ; 28                          ;
+; boundary_port         ; 15                          ;
 ;                       ;                             ;
-; Max LUT depth         ; 3.30                        ;
-; Average LUT depth     ; 2.45                        ;
+; Max LUT depth         ; 4.00                        ;
+; Average LUT depth     ; 2.64                        ;
 +-----------------------+-----------------------------+
 
 
@@ -388,7 +380,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:00:00     ;
+; Top            ; 00:00:01     ;
 +----------------+--------------+
 
 
@@ -398,7 +390,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Tue Dec 17 16:51:58 2024
+    Info: Processing started: Wed Dec 18 23:05:02 2024
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off LCD16_2 -c LCD16_2
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -406,26 +398,45 @@ Info (12021): Found 1 design units, including 1 entities, in source file lcd16_2
     Info (12023): Found entity 1: LCD16_2 File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 6
 Warning (12019): Can't analyze file -- file driver_final.v is missing
 Warning (12019): Can't analyze file -- file output_files/driver_lcd.v is missing
+Info (12021): Found 1 design units, including 1 entities, in source file controller.v
+    Info (12023): Found entity 1: controller File: C:/Users/kristian/Desktop/pv200_final_project/controller.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file memory.v
+    Info (12023): Found entity 1: memory File: C:/Users/kristian/Desktop/pv200_final_project/memory.v Line: 1
 Info (12127): Elaborating entity "LCD16_2" for the top level hierarchy
+Warning (12125): Using design file find_rise.v, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: find_rise File: C:/Users/kristian/Desktop/pv200_final_project/find_rise.v Line: 3
+Info (12128): Elaborating entity "find_rise" for hierarchy "find_rise:u1" File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 38
 Warning (12125): Using design file driver_lcd.v, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
     Info (12023): Found entity 1: driver_lcd File: C:/Users/kristian/Desktop/pv200_final_project/driver_lcd.v Line: 6
-Info (12128): Elaborating entity "driver_lcd" for hierarchy "driver_lcd:u5" File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 22
-Warning (10036): Verilog HDL or VHDL warning at driver_lcd.v(21): object "busy_flag" assigned a value but never read File: C:/Users/kristian/Desktop/pv200_final_project/driver_lcd.v Line: 21
-Warning (10230): Verilog HDL assignment warning at driver_lcd.v(77): truncated value with size 32 to match size of target (24) File: C:/Users/kristian/Desktop/pv200_final_project/driver_lcd.v Line: 77
+Info (12128): Elaborating entity "driver_lcd" for hierarchy "driver_lcd:u5" File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 49
+Warning (10230): Verilog HDL assignment warning at driver_lcd.v(91): truncated value with size 32 to match size of target (24) File: C:/Users/kristian/Desktop/pv200_final_project/driver_lcd.v Line: 91
+Info (12128): Elaborating entity "controller" for hierarchy "controller:u6" File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 59
+Info (12128): Elaborating entity "memory" for hierarchy "memory:u7" File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 65
 Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "GPIO_0[7]" is stuck at GND File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 13
 Info (286030): Timing-Driven Synthesis is running
 Info (17049): 5 registers lost all their fanouts during netlist optimizations.
+Info (144001): Generated suppressed messages file C:/Users/kristian/Desktop/pv200_final_project/output_files/LCD16_2.map.smsg
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Info (21057): Implemented 126 device resources after synthesis - the final resource count might be different
-    Info (21058): Implemented 1 input pins
+Warning (21074): Design contains 3 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "KEY[1]" File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 9
+    Warning (15610): No output dependent on input pin "KEY[2]" File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 9
+    Warning (15610): No output dependent on input pin "KEY[3]" File: C:/Users/kristian/Desktop/pv200_final_project/LCD16_2.v Line: 9
+Info (21057): Implemented 169 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 5 input pins
     Info (21059): Implemented 10 output pins
-    Info (21061): Implemented 115 logic cells
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 8 warnings
-    Info: Peak virtual memory: 4903 megabytes
-    Info: Processing ended: Tue Dec 17 16:52:09 2024
+    Info (21061): Implemented 154 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 12 warnings
+    Info: Peak virtual memory: 4890 megabytes
+    Info: Processing ended: Wed Dec 18 23:05:13 2024
     Info: Elapsed time: 00:00:11
     Info: Total CPU time (on all processors): 00:00:28
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in C:/Users/kristian/Desktop/pv200_final_project/output_files/LCD16_2.map.smsg.
 
 

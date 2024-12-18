@@ -1,0 +1,12 @@
+module controller(
+	//////////// CLOCK //////////
+	input 		          		clk,
+
+	//////////// Data //////////
+	input 		     [8:0]		input_data,
+	
+	
+	//////////// OUTPUT //////////
+	output		     [9:0]		pins // GPIO_0[7:0] = D0-D7; GPIO_0[8] = RS; GPIO_0[9] = E
+);
+
